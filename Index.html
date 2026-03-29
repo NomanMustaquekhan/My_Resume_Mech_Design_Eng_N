@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Noman Mustaque Khan — Mechanical Design Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --cyan: #00d4ff;
+  --cyan-dim: rgba(0,212,255,0.15);
+  --cyan-glow: rgba(0,212,255,0.4);
+  --gold: #ffd166;
+  --orange: #f4845f;
+  --bg: #050b14;
+  --bg2: #080f1a;
+  --bg3: #0c1625;
+  --bg4: #111e30;
+  --steel: #6a7f9a;
+  --text: #cdd9e8;
+  --white: #e8f2ff;
+  --border: rgba(0,212,255,0.18);
+  --border2: rgba(0,212,255,0.35);
+  --font-head: 'Orbitron', sans-serif;
+  --font-body: 'Exo 2', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ═══ CUSTOM CURSOR ═══ */
+#cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, opacity .2s;
+  box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan-glow);
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(0,212,255,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all .12s ease;
+}
+body:hover #cursor { opacity: 1; }
+
+/* ═══ CANVAS ═══ */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* ═══ FLOATING NAV ═══ */
+#float-nav {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.nav-dot {
+  width: 10px; height: 10px;
+  border: 1.5px solid var(--steel);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all .3s;
+  position: relative;
+}
+.nav-dot:hover, .nav-dot.active {
+  border-color: var(--cyan);
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.nav-dot::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--cyan);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .2s;
+  letter-spacing: 1px;
+}
+.nav-dot:hover::after { opacity: 1; }
+
+/* ═══ WRAPPER ═══ */
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* ═══ HERO ═══ */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 0 40px;
+  position: relative;
+}
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+}
+
+/* Photo */
+.photo-ring {
+  position: relative;
+  flex-shrink: 0;
+  width: 160px; height: 160px;
+}
+.photo-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  animation: spin-slow 12s linear infinite;
+}
+.photo-ring img {
+  position: absolute;
+  width: 126px; height: 126px;
+  border-radius: 50%;
+  object-fit: cover;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  filter: grayscale(10%) contrast(1.1);
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 24px var(--cyan-glow);
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Name + title */
+.hero-text { flex: 1; }
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: fadeUp .6s .3s forwards;
+}
+
+.hero-name {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--white);
+  opacity: 0;
+  animation: fadeUp .6s .5s forwards;
+  letter-spacing: 1px;
+  text-shadow: 0 0 40px rgba(0,212,255,0.2);
+}
+.hero-name span { color: var(--cyan); }
+
+.hero-title-wrap {
+  margin-top: 10px;
+  opacity: 0;
+  animation: fadeUp .6s .7s forwards;
+}
+
+#typed-title {
+  font-family: var(--font-head);
+  font-size: clamp(12px, 1.6vw, 16px);
+  font-weight: 500;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.cursor-blink {
+  display: inline-block;
+  width: 2px; height: 1em;
+  background: var(--cyan);
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  animation: blink .7s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity:0; } }
+
+.hero-summary {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--steel);
+  max-width: 540px;
+  line-height: 1.75;
+  opacity: 0;
+  animation: fadeUp .6s .9s forwards;
+}
+.hero-summary strong { color: var(--text); font-weight: 600; }
+
+.hero-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  opacity: 0;
+  animation: fadeUp .6s 1.1s forwards;
+}
+.hc-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: rgba(0,212,255,0.04);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  text-decoration: none;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+.hc-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.07), transparent);
+  transform: translateX(-100%);
+  transition: transform .4s;
+}
+.hc-item:hover::before { transform: translateX(100%); }
+.hc-item:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px var(--cyan-dim); }
+.hc-icon { color: var(--cyan); font-size: 13px; }
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  animation: fadeUp .6s 1.6s forwards;
+}
+.scroll-cue span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--steel);
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--cyan), transparent);
+  animation: scroll-pulse 1.4s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%,100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.5); opacity: 0.4; }
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(20px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* ═══ SECTION WRAPPER ═══ */
+.section {
+  padding: 60px 0;
+  border-top: 1px solid var(--border);
+}
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.sec-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  opacity: 0.5;
+}
+.sec-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.sec-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+.sec-corner {
+  width: 6px; height: 6px;
+  border-top: 1px solid var(--cyan);
+  border-right: 1px solid var(--cyan);
+}
+
+/* ═══ STATS BAR ═══ */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all .6s ease;
+}
+.stats-bar.revealed { opacity:1; transform:none; }
+
+.stat-cell {
+  background: var(--bg2);
+  padding: 24px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+.stat-cell:hover { background: var(--bg4); }
+.stat-cell::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px; width: 100%;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transition: transform .4s;
+}
+.stat-cell:hover::before { transform: scaleX(1); }
+
+.stat-num {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--cyan);
+  line-height: 1;
+  text-shadow: 0 0 20px var(--cyan-glow);
+}
+.stat-label {
+  font-size: 10px;
+  color: var(--steel);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+}
+
+/* ═══ TIMELINE / EXPERIENCE ═══ */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 1px;
+  height: calc(100% - 8px);
+  background: linear-gradient(to bottom, var(--cyan), transparent);
+}
+
+.tl-item {
+  position: relative;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all .5s ease;
+}
+.tl-item.revealed { opacity:1; transform:none; }
+.tl-item:last-child { margin-bottom: 0; }
+
+.tl-dot {
+  position: absolute;
+  left: -34px;
+  top: 8px;
+  width: 12px; height: 12px;
+  background: var(--bg);
+  border: 2px solid var(--cyan);
+  transform: rotate(45deg);
+  transition: background .3s, box-shadow .3s;
+}
+.tl-item:hover .tl-dot {
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+}
+
+.tl-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s, box-shadow .3s, transform .3s;
+}
+.tl-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,212,255,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.tl-card:hover::before { opacity: 1; }
+.tl-card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(0,212,255,0.1);
+  transform: translateY(-2px);
+}
+
+.tl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.tl-role {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.5px;
+}
+.tl-period {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tl-company {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  margin-bottom: 2px;
+}
+.tl-loc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--steel);
+  margin-bottom: 12px;
+}
+.tl-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tl-bullets li {
+  font-size: 12.5px;
+  color: var(--text);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.65;
+}
+.tl-bullets li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--cyan);
+  font-size: 9px;
+  top: 4px;
+}
+.tl-bullets li strong { color: var(--gold); font-weight: 600; }
+
+/* ═══ SKILLS ═══ */
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.skill-group-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.skill-bar-item {
+  margin-bottom: 14px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all .4s ease;
+}
+.skill-bar-item.revealed { opacity:1; transform:none; }
+
+.skill-bar-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.skill-bar-name {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+}
+.skill-bar-pct {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cyan);
+}
+.skill-track {
+  height: 4px;
+  background: var(--bg4);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.skill-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+.skill-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: inherit;
+  box-shadow: 0 0 8px currentColor;
+}
+.fill-cyan { background: linear-gradient(90deg, var(--blue-mid, #0077b6), var(--cyan)); }
+.fill-gold { background: linear-gradient(90deg, #b85c00, var(--gold)); }
+.fill-green { background: linear-gradient(90deg, #0a6640, #4cdc8c); }
+.fill-orange { background: linear-gradient(90deg, #8c2a00, var(--orange)); }
+
+/* Domain pills */
+.domain-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.dpill {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text);
+  font-family: var(--font-body);
+  background: var(--bg2);
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.dpill::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%; width: 2px;
+  background: var(--cyan);
+  transform: scaleY(0);
+  transition: transform .25s;
+}
+.dpill:hover { border-color: var(--cyan); color: var(--cyan); transform: translateX(4px); }
+.dpill:hover::before { transform: scaleY(1); }
+
+/* ═══ PROJECTS ═══ */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.proj-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s, transform .5s, border-color .3s, box-shadow .3s;
+}
+.proj-card.revealed { opacity:1; transform:none; }
+.proj-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .4s;
+}
+.proj-card:hover { border-color: var(--border2); box-shadow: 0 12px 40px rgba(0,0,0,0.5); transform: translateY(-4px) !important; }
+.proj-card:hover::after { transform: scaleX(1); }
+
+.proj-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+  display: block;
+}
+.proj-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.proj-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.proj-chip {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--cyan);
+  border: 1px solid var(--border2);
+  padding: 2px 7px;
+  background: var(--cyan-dim);
+}
+.proj-desc {
+  font-size: 12px;
+  color: var(--steel);
+  line-height: 1.65;
+}
+.proj-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--steel);
+  margin-top: 12px;
+  opacity: 0.6;
+}
+
+/* ═══ EDUCATION ═══ */
+.edu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.edu-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.edu-card.revealed { opacity:1; transform:none; }
+.edu-card:hover { border-color: var(--cyan); box-shadow: 0 0 24px rgba(0,212,255,0.08); }
+
+.edu-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  background: var(--cyan-dim);
+  border: 1px solid var(--border2);
+  padding: 2px 8px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.edu-degree {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.edu-school {
+  font-size: 11px;
+  color: var(--cyan);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.edu-score {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255,209,102,0.4);
+}
+
+/* ═══ CERTS - Flip Cards ═══ */
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.cert-flip {
+  height: 120px;
+  perspective: 600px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .4s, transform .4s;
+}
+.cert-flip.revealed { opacity:1; transform:none; }
+
+.cert-inner {
+  position: relative;
+  width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cert-flip:hover .cert-inner { transform: rotateY(180deg); }
+
+.cert-front, .cert-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  text-align: center;
+}
+.cert-back {
+  transform: rotateY(180deg);
+  background: var(--bg4);
+  border-color: var(--cyan);
+}
+.cert-icon { font-size: 22px; margin-bottom: 8px; }
+.cert-name {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.3;
+}
+.cert-status-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 8px;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+.badge-active { color: #4cdc8c; border: 1px solid #4cdc8c; background: rgba(76,220,140,0.08); }
+.badge-progress { color: var(--gold); border: 1px solid var(--gold); background: rgba(255,209,102,0.08); }
+.cert-back-text {
+  font-size: 11px;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+/* ═══ ACHIEVEMENTS ═══ */
+.ach-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.ach-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all .3s;
+  opacity: 0;
+  transform: translateX(-15px);
+}
+.ach-card.revealed { opacity:1; transform:none; }
+.ach-card:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,209,102,0.08); }
+.ach-emoji { font-size: 32px; }
+.ach-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.ach-sub { font-size: 12px; color: var(--steel); line-height: 1.5; }
+
+/* ═══ FOOTER ═══ */
+footer {
+  text-align: center;
+  padding: 40px 0 20px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--steel);
+  letter-spacing: 2px;
+  opacity: 0.5;
+  border-top: 1px solid var(--border);
+}
+
+/* ═══ SECTION REVEAL ═══ */
+.sec-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.sec-reveal.revealed { opacity:1; transform:none; }
+
+/* ═══ SCAN LINE ═══ */
+.scan-line {
+  position: fixed;
+  left: 0; width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.15), transparent);
+  z-index: 50;
+  pointer-events: none;
+  animation: scan 8s linear infinite;
+}
+@keyframes scan {
+  0% { top: -2px; }
+  100% { top: 100vh; }
+}
+
+/* ═══ GLITCH EFFECT on NAME ═══ */
+.glitch {
+  position: relative;
+}
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: var(--white);
+}
+.glitch::before {
+  color: var(--cyan);
+  clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  animation: glitch1 4s infinite;
+  opacity: 0.5;
+}
+.glitch::after {
+  color: var(--orange);
+  clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+  animation: glitch2 4s infinite;
+  opacity: 0.5;
+}
+@keyframes glitch1 {
+  0%,94%,100% { transform: none; }
+  95% { transform: translateX(-3px); }
+  97% { transform: translateX(3px); }
+}
+@keyframes glitch2 {
+  0%,96%,100% { transform: none; }
+  97% { transform: translateX(3px); }
+  99% { transform: translateX(-3px); }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="scan-line"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Floating nav -->
+<nav id="float-nav">
+  <div class="nav-dot active" data-target="hero" data-label="HOME"></div>
+  <div class="nav-dot" data-target="experience" data-label="EXPERIENCE"></div>
+  <div class="nav-dot" data-target="skills" data-label="SKILLS"></div>
+  <div class="nav-dot" data-target="projects" data-label="PROJECTS"></div>
+  <div class="nav-dot" data-target="education" data-label="EDUCATION"></div>
+  <div class="nav-dot" data-target="certs" data-label="CERTS"></div>
+</nav>
+
+<div id="app">
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="photo-ring">
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+          <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(0,212,255,0.6)" stroke-width="1.5"
+            stroke-dasharray="14 8" stroke-linecap="round"/>
+          <circle cx="80" cy="6" r="3" fill="#00d4ff"/>
+          <circle cx="80" cy="154" r="3" fill="rgba(0,212,255,0.4)"/>
+        </svg>
+        <img src="https://nomanmustaquekhan.github.io/my-resume/images/noman-khan-profile.jpeg" alt="Noman"/>
+      </div>
+      <div class="hero-text">
+        <div class="hero-tag">◈ RESUME v2.0 · MECHANICAL ENGINEERING</div>
+        <h1 class="hero-name glitch" data-text="NOMAN MUSTAQUE KHAN">NOMAN <span>MUSTAQUE</span> KHAN</h1>
+        <div class="hero-title-wrap">
+          <span id="typed-title"></span><span class="cursor-blink"></span>
+        </div>
+        <p class="hero-summary">
+          B.Tech Mechanical Engineer with industrial expertise in <strong>process engineering, procurement & steel plant operations</strong>. Aspiring toward a <strong>Mechanical Design role</strong>, leveraging CAD proficiency in <strong>AutoCAD & CATIA</strong>, analytical acumen, and Six Sigma foundations to engineer precision solutions.
+        </p>
+        <div class="hero-contacts">
+          <a class="hc-item" href="mailto:nomankhan07686@gmail.com">
+            <span class="hc-icon">✉</span> nomankhan07686@gmail.com
+          </a>
+          <a class="hc-item" href="tel:+919145754695">
+            <span class="hc-icon">◎</span> +91 9145754695
+          </a>
+          <a class="hc-item" href="https://linkedin.com/in/nomankhan786" target="_blank">
+            <span class="hc-icon">⬡</span> linkedin.com/in/nomankhan786
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar sec-reveal" style="margin-top: 52px;" id="stats">
+      <div class="stat-cell">
+        <div class="stat-num" data-count="2">0+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count="2">0</div>
+        <div class="stat-label">Companies</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count="8.54" data-decimal="1">0</div>
+        <div class="stat-label">B.Tech CGPA</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count="20">0</div>
+        <div class="stat-label">% Stockout Reduction</div>
+      </div>
+    </div>
+
+    <div class="scroll-cue">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══ EXPERIENCE ═══ -->
+  <section class="section" id="experience">
+    <div class="sec-head sec-reveal">
+      <span class="sec-num">01</span>
+      <span class="sec-title">Experience</span>
+      <div class="sec-line"></div>
+      <div class="sec-corner"></div>
+    </div>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-header">
+            <div class="tl-role">Executive — Commercial &amp; Engineering Operations</div>
+            <div class="tl-period">AUG 2025 → PRESENT</div>
+          </div>
+          <div class="tl-company">Lloyds Metals and Energy Ltd.</div>
+          <div class="tl-loc">📍 Ghugus, Maharashtra</div>
+          <ul class="tl-bullets">
+            <li>Oversee procurement and logistics for HSD (diesel), in-plant logistics, and by-product movement — driving MIS preparation and KPI tracking to enhance operational visibility across steel plant engineering systems.</li>
+            <li>Deliver analytical inputs to evaluate mechanical system efficiency, identify cost drivers, and resolve operational gaps, supporting data-driven engineering decisions through cross-functional collaboration.</li>
+            <li>Strengthened techno-commercial depth through contract drafting, documentation, and evaluation, utilizing <strong>SAP S/4HANA & SAP Ariba</strong> and contributing to R&D initiatives focused on process optimization.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-header">
+            <div class="tl-role">Graduate Engineer Trainee</div>
+            <div class="tl-period">AUG 2024 → AUG 2025</div>
+          </div>
+          <div class="tl-company">Lloyds Metals and Energy Ltd.</div>
+          <div class="tl-loc">📍 Ghugus, Maharashtra</div>
+          <ul class="tl-bullets">
+            <li>Managed end-to-end procurement across mechanical and electrical engineering categories — ensuring timely sourcing of components, coordinating with suppliers, and aligning with technical requirements.</li>
+            <li>Analyzed purchasing and vendor data to optimize mechanical procurement processes, implemented KPI frameworks, contributing to a <strong>15% increase in process efficiency</strong>.</li>
+            <li>Initiated process automation using <strong>Google Sheets + AppScript</strong> for open PO follow-ups, reducing manual effort and improving turnaround time across procurement cycles.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-header">
+            <div class="tl-role">Inventory Specialist</div>
+            <div class="tl-period">JAN 2024 → AUG 2024</div>
+          </div>
+          <div class="tl-company">Caliber Mining &amp; Logistics</div>
+          <div class="tl-loc">📍 Chandrapur, Maharashtra</div>
+          <ul class="tl-bullets">
+            <li>Applied mechanical engineering knowledge of spare parts to analyze consumption patterns and optimize inventory levels — achieving a <strong>20% reduction in stockouts</strong>.</li>
+            <li>Identified slow-moving and obsolete inventory (SLOB), initiated stock transfers, reducing overall inventory holding by approximately <strong>15%</strong> and improving storage efficiency.</li>
+            <li>Conducted inventory reconciliation, resolved discrepancies, and strengthened data accuracy to improve system integrity and inventory control.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ SKILLS ═══ -->
+  <section class="section" id="skills">
+    <div class="sec-head sec-reveal">
+      <span class="sec-num">02</span>
+      <span class="sec-title">Technical Arsenal</span>
+      <div class="sec-line"></div>
+      <div class="sec-corner"></div>
+    </div>
+    <div class="skills-grid">
+      <div>
+        <div class="skill-group-title">▸ Design & CAD Tools</div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">AutoCAD</span><span class="skill-bar-pct">88%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-cyan" data-width="88"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">CATIA V5</span><span class="skill-bar-pct">82%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-cyan" data-width="82"></div></div>
+        </div>
+        <div class="skill-group-title" style="margin-top:20px;">▸ Data & Analytics</div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">Power BI</span><span class="skill-bar-pct">80%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-green" data-width="80"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">Advanced Excel</span><span class="skill-bar-pct">85%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-green" data-width="85"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">Python (Pandas)</span><span class="skill-bar-pct">70%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-green" data-width="70"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">▸ ERP Systems</div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">SAP S/4HANA</span><span class="skill-bar-pct">78%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-gold" data-width="78"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-top"><span class="skill-bar-name">SAP Ariba</span><span class="skill-bar-pct">72%</span></div>
+          <div class="skill-track"><div class="skill-fill fill-gold" data-width="72"></div></div>
+        </div>
+        <div class="skill-group-title" style="margin-top:20px;">▸ Domain Expertise</div>
+        <div class="domain-pills">
+          <span class="dpill">Mechanical Systems</span>
+          <span class="dpill">Supply Chain</span>
+          <span class="dpill">Inventory Optimization</span>
+          <span class="dpill">Vendor Management</span>
+          <span class="dpill">KPI Dashboarding</span>
+          <span class="dpill">Process Engineering</span>
+          <span class="dpill">Contract Drafting</span>
+          <span class="dpill">Cost-Benefit Analysis</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROJECTS ═══ -->
+  <section class="section" id="projects">
+    <div class="sec-head sec-reveal">
+      <span class="sec-num">03</span>
+      <span class="sec-title">Key Projects</span>
+      <div class="sec-line"></div>
+      <div class="sec-corner"></div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card">
+        <span class="proj-icon">📡</span>
+        <div class="proj-name">Radar Object Detection System</div>
+        <div class="proj-chips">
+          <span class="proj-chip">Arduino</span>
+          <span class="proj-chip">Python</span>
+          <span class="proj-chip">Hardware Integration</span>
+          <span class="proj-chip">Real-time Viz</span>
+        </div>
+        <div class="proj-desc">Engineered a hardware-software integration system using Python for real-time data visualization — identifies obstacles and measures the distance and speed of moving objects using radar principles.</div>
+        <div class="proj-date">▸ OCT 2023</div>
+      </div>
+      <div class="proj-card">
+        <span class="proj-icon">⚙️</span>
+        <div class="proj-name">Open PO Follow-up Automation</div>
+        <div class="proj-chips">
+          <span class="proj-chip">Google Sheets</span>
+          <span class="proj-chip">AppScript</span>
+          <span class="proj-chip">Automation</span>
+          <span class="proj-chip">Procurement</span>
+        </div>
+        <div class="proj-desc">Automated purchase order follow-up workflows using Google Sheets AppScripts, dramatically reducing manual effort and improving procurement efficiency across engineering categories at LMEL.</div>
+        <div class="proj-date">▸ AUG 2024</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ EDUCATION ═══ -->
+  <section class="section" id="education">
+    <div class="sec-head sec-reveal">
+      <span class="sec-num">04</span>
+      <span class="sec-title">Education</span>
+      <div class="sec-line"></div>
+      <div class="sec-corner"></div>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-badge">B.TECH · 2024</div>
+        <div class="edu-degree">Mechanical Engineering</div>
+        <div class="edu-school">Ballarpur Institute of Technology</div>
+        <div class="edu-score">CGPA 8.54 · 1st Rank 🏆</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-badge">HSC · 2020</div>
+        <div class="edu-degree">Science Stream</div>
+        <div class="edu-school">Vidya Vihar Convent HS &amp; Jr College</div>
+        <div class="edu-score">84.15%</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-badge">SSC · 2018</div>
+        <div class="edu-degree">Class X</div>
+        <div class="edu-school">Vidya Vihar Convent HS &amp; Jr College</div>
+        <div class="edu-score">84.40%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CERTIFICATIONS ═══ -->
+  <section class="section" id="certs">
+    <div class="sec-head sec-reveal">
+      <span class="sec-num">05</span>
+      <span class="sec-title">Certifications</span>
+      <div class="sec-line"></div>
+      <div class="sec-corner"></div>
+    </div>
+    <p class="sec-reveal" style="font-family:var(--font-mono);font-size:10px;color:var(--steel);margin-bottom:20px;letter-spacing:1px;">— HOVER TO FLIP CARDS —</p>
+    <div class="certs-grid">
+      <div class="cert-flip">
+        <div class="cert-inner">
+          <div class="cert-front">
+            <div class="cert-icon">📐</div>
+            <div class="cert-name">AutoCAD</div>
+            <div class="cert-status-badge badge-active">CERTIFIED</div>
+          </div>
+          <div class="cert-back">
+            <div class="cert-back-text">2D/3D Design<br/>Drafting &amp; Annotation<br/>Mechanical Layouts</div>
+          </div>
+        </div>
+      </div>
+      <div class="cert-flip">
+        <div class="cert-inner">
+          <div class="cert-front">
+            <div class="cert-icon">🔩</div>
+            <div class="cert-name">CATIA V5R19</div>
+            <div class="cert-status-badge badge-active">CERTIFIED</div>
+          </div>
+          <div class="cert-back">
+            <div class="cert-back-text">Part Design<br/>Assembly Modelling<br/>Surface Design</div>
+          </div>
+        </div>
+      </div>
+      <div class="cert-flip">
+        <div class="cert-inner">
+          <div class="cert-front">
+            <div class="cert-icon">📊</div>
+            <div class="cert-name">Six Sigma</div>
+            <div class="cert-status-badge badge-progress">IN PROGRESS</div>
+          </div>
+          <div class="cert-back">
+            <div class="cert-back-text">DMAIC<br/>Process Control<br/>Quality Management</div>
+          </div>
+        </div>
+      </div>
+      <div class="cert-flip">
+        <div class="cert-inner">
+          <div class="cert-front">
+            <div class="cert-icon">💹</div>
+            <div class="cert-name">Engineering Economics</div>
+            <div class="cert-status-badge badge-active">CERTIFIED</div>
+          </div>
+          <div class="cert-back">
+            <div class="cert-back-text">Cost Analysis<br/>Project Evaluation<br/>Financial Modelling</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="sec-head sec-reveal" style="margin-top:56px;">
+      <span class="sec-num">06</span>
+      <span class="sec-title">Achievements</span>
+      <div class="sec-line"></div>
+      <div class="sec-corner"></div>
+    </div>
+    <div class="ach-row">
+      <div class="ach-card">
+        <div class="ach-emoji">🏆</div>
+        <div>
+          <div class="ach-title">Gold Medalist</div>
+          <div class="ach-sub">Secured 1st Rank in 8th Semester with SGPA 9.14 at Ballarpur Institute of Technology</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-emoji">📈</div>
+        <div>
+          <div class="ach-title">20% Stockout Reduction</div>
+          <div class="ach-sub">Achieved through data-driven inventory analysis and optimized procurement at Caliber Mining</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>◈ NOMAN MUSTAQUE KHAN · MECHANICAL DESIGN ENGINEER · NAGPUR, MH · 2025 ◈</footer>
+
+<script>
+// ═══ CURSOR ═══
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button,.nav-dot,.cert-flip,.dpill').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; });
+});
+
+// ═══ CANVAS PARTICLES ═══
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.r = Math.random() * 1.5 + 0.3;
+    this.alpha = Math.random() * 0.5 + 0.1;
+    this.pulse = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    this.pulse += 0.02;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    const a = this.alpha * (0.6 + 0.4 * Math.sin(this.pulse));
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,212,255,${a})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+// Grid lines
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(0,212,255,0.03)';
+  ctx.lineWidth = 1;
+  const gs = 60;
+  for (let x = 0; x < W; x += gs) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += gs) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+}
+
+// Connect nearby
+function drawConnections() {
+  const maxDist = 100;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < maxDist) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,212,255,${0.08 * (1 - d / maxDist)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animCanvas() {
+  ctx.clearRect(0, 0, W, H);
+  drawGrid();
+  drawConnections();
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animCanvas);
+}
+animCanvas();
+
+// ═══ TYPING ANIMATION ═══
+const titles = [
+  'Mechanical Design Engineer',
+  'CAD & Systems Specialist',
+  'Aspiring Design Professional',
+];
+let tIdx = 0, cIdx = 0, deleting = false;
+const typedEl = document.getElementById('typed-title');
+
+function type() {
+  const current = titles[tIdx];
+  if (!deleting) {
+    typedEl.textContent = current.slice(0, ++cIdx);
+    if (cIdx === current.length) { deleting = true; setTimeout(type, 2000); return; }
+  } else {
+    typedEl.textContent = current.slice(0, --cIdx);
+    if (cIdx === 0) { deleting = false; tIdx = (tIdx + 1) % titles.length; }
+  }
+  setTimeout(type, deleting ? 45 : 85);
+}
+setTimeout(type, 1200);
+
+// ═══ SCROLL REVEAL ═══
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('revealed');
+      // Trigger skill bars
+      e.target.querySelectorAll('.skill-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+      // Trigger counter
+      e.target.querySelectorAll('[data-count]').forEach(el => {
+        animateCount(el);
+      });
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.sec-reveal, .tl-item, .proj-card, .edu-card, .cert-flip, .ach-card, .skill-bar-item, .stats-bar').forEach(el => {
+  revealObserver.observe(el);
+});
+
+// Stagger tl items
+document.querySelectorAll('.tl-item').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.12) + 's';
+});
+document.querySelectorAll('.edu-card').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.1) + 's';
+});
+document.querySelectorAll('.cert-flip').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.08) + 's';
+});
+document.querySelectorAll('.skill-bar-item').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.07) + 's';
+});
+
+// ═══ COUNTER ANIMATION ═══
+function animateCount(el) {
+  const target = parseFloat(el.dataset.count);
+  const decimal = parseInt(el.dataset.decimal || 0);
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const val = target * ease;
+    el.textContent = decimal ? val.toFixed(decimal) : Math.round(val);
+    if (t < 1) requestAnimationFrame(step);
+    else el.textContent = decimal ? target.toFixed(decimal) : target;
+  }
+  requestAnimationFrame(step);
+}
+
+// ═══ FLOATING NAV ═══
+const sections = ['hero','experience','skills','projects','education','certs'];
+const dots = document.querySelectorAll('.nav-dot');
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    document.getElementById(dot.dataset.target).scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+const secObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      dots.forEach(d => d.classList.toggle('active', d.dataset.target === id));
+    }
+  });
+}, { threshold: 0.4 });
+
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) secObserver.observe(el);
+});
+</script>
+</body>
+</html>
